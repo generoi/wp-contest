@@ -1,6 +1,6 @@
-# wp-plugin-boilerplate
+# wp-contest
 
-> A boilerplate WordPress plugin
+> ...
 
 ## Requirements
 
@@ -60,7 +60,7 @@ Setup new plugin
 
 ### Translations
 
-Rebuild POT files (after this, copy to each language as `languages/wp-plugin-boilerplate-<langcode>.po` and translate it)
+Rebuild POT files (after this, copy to each language as `languages/wp-contest-<langcode>.po` and translate it)
 
     npm run lang:pot
 

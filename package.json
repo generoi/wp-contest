@@ -1,7 +1,7 @@
 {
-  "name": "wp-plugin-boilerplate",
+  "name": "wp-contest",
   "version": "0.1.0",
-  "description": "A boilerplate WordPress plugin",
+  "description": "...",
   "main": "assets/scripts/plugin.js",
   "scripts": {
     "dev": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -14,7 +14,7 @@
     "test": "npm run -s lint && composer test",
     "precommit": "npm run test",
     "lang": "npm run lang:pot && npm run lang:mo",
-    "lang:pot": "wp-pot --src '*.php' --src 'src/**/*.php'--src 'languages/**/*.php' --team 'Genero <developers@genero.fi>' --package 'wp-plugin-boilerplate' >| languages/wp-plugin-boilerplate.pot",
+    "lang:pot": "wp-pot --src '*.php' --src 'src/**/*.php'--src 'languages/**/*.php' --team 'Genero <developers@genero.fi>' --package 'wp-contest' >| languages/wp-contest.pot",
     "lang:mo": "for file in `find . -name \"*.po\"` ; do msgfmt -o ${file/.po/.mo} $file; done"
   },
   "browserslist": [
@@ -35,14 +35,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/generoi/wp-plugin-boilerplate.git"
+    "url": "git+https://github.com/generoi/wp-contest.git"
   },
   "author": "Oskar Schöldström",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/generoi/wp-plugin-boilerplate/issues"
+    "url": "https://github.com/generoi/wp-contest/issues"
   },
-  "homepage": "https://github.com/generoi/wp-plugin-boilerplate#readme",
+  "homepage": "https://github.com/generoi/wp-contest#readme",
   "engines": {
     "node": ">= 6.9.4"
   },

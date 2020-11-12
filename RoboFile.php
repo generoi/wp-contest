@@ -9,10 +9,10 @@ class RoboFile extends \Robo\Tasks
     use \Generoi\Robo\Task\Placeholder\loadTasks;
     use \Generoi\Robo\Command\SearchReplaceCommand;
 
-    public $machineName = 'wp-plugin-boilerplate';
-    public $name = 'Plugin Boilerplate';
-    public $namespace = 'PluginBoilerplate';
-    public $description = 'A boilerplate WordPress plugin';
+    public $machineName = 'wp-contest';
+    public $name = 'WP Contest';
+    public $namespace = 'Contest';
+    public $description = '...';
 
     public function rename($machineName = null, $options = [
         'force' => false,
