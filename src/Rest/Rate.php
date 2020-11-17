@@ -44,6 +44,8 @@ class Rate extends WP_REST_Controller
         }
 
         $contestant->addRating(1);
+        $this->clearPageCache($request->get_header('referer'));
+
         return new WP_REST_Response([
             'rating' => $contestant->getTotalRating(),
         ], 201);
@@ -57,6 +59,8 @@ class Rate extends WP_REST_Controller
         }
 
         $contestant->removeRating();
+        $this->clearPageCache($request->get_header('referer'));
+
         return new WP_REST_Response([
             'rating' => $contestant->getTotalRating(),
         ], 200);
@@ -69,5 +73,23 @@ class Rate extends WP_REST_Controller
         return new WP_REST_Response([
             'rating' => $contestant->getTotalRating(),
         ], 200);
+    }
+
+    /**
+     * Clear the page cache of the referring page.
+     */
+    protected function clearPageCache(string $referer): bool
+    {
+        $refererHost = parse_url($referer, PHP_URL_HOST);
+        $serverHost = $_SERVER['HTTP_HOST'];
+        if ($refererHost !== $serverHost) {
+            return false;
+        }
+
+        if (!function_exists('wpsc_delete_url_cache')) {
+            return false;
+        }
+
+        return wpsc_delete_url_cache($referer);
     }
 }
