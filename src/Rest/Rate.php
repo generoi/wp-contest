@@ -18,7 +18,7 @@ class Rate extends WP_REST_Controller
         add_action('rest_api_init', [$this, 'registerRoutes']);
     }
 
-    public function registerRoutes()
+    public function registerRoutes(): void
     {
         register_rest_route($this->namespace, '/vote/(?P<id>\d+)', [
             [

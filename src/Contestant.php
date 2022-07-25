@@ -4,8 +4,8 @@ namespace GeneroWP\Contest;
 
 class Contestant
 {
-    public $postId;
-    public $ip;
+    public int $postId;
+    public string $ip;
 
     const META_RATING = 'contest_rating';
     const META_RATING_IPS = 'contest_rating_ips';
@@ -67,6 +67,9 @@ class Contestant
         ]));
     }
 
+    /**
+     * @return string[]
+     */
     protected function getAllRatings(): array
     {
         return get_post_meta($this->postId, self::META_RATING_IPS, true) ?: [];

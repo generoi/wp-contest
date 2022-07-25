@@ -7,8 +7,8 @@ use PostTypes\PostType;
 
 class Plugin
 {
-    public $plugin_path;
-    public $plugin_url;
+    public string $plugin_path;
+    public string $plugin_url;
 
     protected static Plugin $instance;
 
@@ -22,8 +22,8 @@ class Plugin
 
     public function __construct()
     {
-        $this->plugin_path = plugin_dir_path(__FILE__);
-        $this->plugin_url = plugin_dir_url(__FILE__);
+        $this->plugin_path = plugin_dir_path(dirname(__DIR__) . '/plugin.php');
+        $this->plugin_url = plugin_dir_url(dirname(__DIR__) . '/plugin.php');
 
         add_action('plugins_loaded', [$this, 'init']);
     }
@@ -50,6 +50,8 @@ class Plugin
             'publicly_queryable' => false,
         ]);
         $type->icon('dashicons-cover-image');
+
+        // @phpstan-ignore-next-line
         $type->columns()
             ->add(['votes' => 'Votes'])
             ->order(['votes' => 2])
@@ -75,8 +77,7 @@ class Plugin
             'wp-contest/css',
             $this->plugin_url . 'dist/main.css',
             [],
-            filemtime($this->plugin_path . 'dist/main.css'),
-            true
+            filemtime($this->plugin_path . 'dist/main.css')
         );
     }
 
