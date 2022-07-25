@@ -2,8 +2,6 @@
 
 namespace GeneroWP\Contest;
 
-use GeneroWP\Common\Singleton;
-
 class Contestant
 {
     public $postId;
@@ -109,7 +107,8 @@ class Contestant
     {
         return filter_var(
             $ip,
-            FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
         ) !== false;
     }
 }
