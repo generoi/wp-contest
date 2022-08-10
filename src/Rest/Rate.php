@@ -86,10 +86,27 @@ class Rate extends WP_REST_Controller
             return false;
         }
 
-        if (!function_exists('wpsc_delete_url_cache')) {
+        if (function_exists('wpsc_delete_url_cache')) {
+            return wpsc_delete_url_cache($referer);
+        }
+
+        if (defined('KINSTAMU_DISABLE_AUTOPURGE') && KINSTAMU_DISABLE_AUTOPURGE === true) {
             return false;
         }
 
-        return wpsc_delete_url_cache($referer);
+        if (defined('KINSTAMU_VERSION')) {
+            $purgeRequest = apply_filters('KinstaCache/purgeThrottled', [
+                'single|rating' => str_replace(['http://', 'https://'], '', $referer),
+            ]);
+            $response = wp_remote_post('https://localhost/kinsta-clear-cache/v2/immediate', [
+                'sslverify' => false,
+                'timeout' => 5,
+                'body' => $purgeRequest,
+            ]);
+
+            return !is_wp_error($response);
+        }
+
+        return false;
     }
 }
