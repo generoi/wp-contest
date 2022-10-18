@@ -23,14 +23,17 @@ class Rate extends WP_REST_Controller
         register_rest_route($this->namespace, '/vote/(?P<id>\d+)', [
             [
                 'methods' => [WP_REST_Server::CREATABLE],
+                'permission_callback' => '__return_true',
                 'callback' => [$this, 'addVote'],
             ],
             [
                 'methods' => [WP_REST_Server::READABLE],
+                'permission_callback' => '__return_true',
                 'callback' => [$this, 'getVotes'],
             ],
             [
                 'methods' => [WP_REST_Server::DELETABLE],
+                'permission_callback' => '__return_true',
                 'callback' => [$this, 'removeVote'],
             ],
         ]);
