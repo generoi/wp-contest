@@ -12,6 +12,8 @@ class Rate extends WP_REST_Controller
 {
     protected $namespace;
 
+    const TRANSIENT_MODIFIED = 'wp_contest_all_modified';
+
     public function __construct()
     {
         $this->namespace = 'wp-contest/v1';
@@ -20,6 +22,12 @@ class Rate extends WP_REST_Controller
 
     public function registerRoutes(): void
     {
+        register_rest_route($this->namespace, '/votes', [
+            'methods' => WP_REST_Server::READABLE,
+            'permission_callback' => '__return_true',
+            'callback' => [$this, 'getAllVotes'],
+        ]);
+
         register_rest_route($this->namespace, '/vote/(?P<id>\d+)', [
             [
                 'methods' => [WP_REST_Server::CREATABLE],
@@ -39,6 +47,35 @@ class Rate extends WP_REST_Controller
         ]);
     }
 
+    public function getAllVotes(): WP_REST_Response
+    {
+        $lastModified = (int) get_transient(self::TRANSIENT_MODIFIED);
+        if (!$this->hasHeaderModifiedSince($lastModified)) {
+            header('HTTP/1.0 304 Not Modified');
+            exit;
+        }
+
+        $posts = get_posts([
+            'post_type' => 'contestant',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+        ]);
+
+        $result = [];
+        foreach ($posts as $postId) {
+            $contestant = new Contestant($postId);
+            $result[] = [
+                'id' => $postId,
+                'rating' => $contestant->getTotalRating(),
+            ];
+        }
+
+        return new WP_REST_Response([
+            'ratings' => $result,
+        ]);
+    }
+
     public function addVote(WP_REST_Request $request): WP_REST_Response
     {
         $contestant = new Contestant($request['id']);
@@ -48,6 +85,7 @@ class Rate extends WP_REST_Controller
 
         $contestant->addRating(1);
         $this->clearPageCache($request->get_header('referer'));
+        $this->onUpdate();
 
         return new WP_REST_Response([
             'rating' => $contestant->getTotalRating(),
@@ -63,6 +101,7 @@ class Rate extends WP_REST_Controller
 
         $contestant->removeRating();
         $this->clearPageCache($request->get_header('referer'));
+        $this->onUpdate();
 
         return new WP_REST_Response([
             'rating' => $contestant->getTotalRating(),
@@ -76,6 +115,11 @@ class Rate extends WP_REST_Controller
         return new WP_REST_Response([
             'rating' => $contestant->getTotalRating(),
         ], 200);
+    }
+
+    protected function onUpdate(): void
+    {
+        set_transient(self::TRANSIENT_MODIFIED, time());
     }
 
     /**
@@ -107,9 +151,25 @@ class Rate extends WP_REST_Controller
                 'body' => $purgeRequest,
             ]);
 
+            error_log('Clearing: ' . $referer);
+
             return !is_wp_error($response);
         }
 
         return false;
     }
+
+    protected function hasHeaderModifiedSince(int $lastModified): bool
+    {
+        if (!isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+            return true;
+        }
+
+        $modifiedSince = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+        if ($modifiedSince > $lastModified) {
+            return false;
+        }
+        return true;
+    }
+
 }
